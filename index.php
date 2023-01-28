@@ -1,4 +1,15 @@
 <?php
+
+/*
+Plugin Name: Simple gallery 
+Description: The Single File PHP Gallery is a web-based gallery that is contained in a single PHP file. 
+By simply copying the script into any directory that holds images, a gallery will be created, with sub-directories becoming sub-galleries. 
+Thumbnails for both images and directories are generated automatically and no configuration or programming expertise is required to use it.
+Version: 0.7
+Author: Notelseit Srls - https://www.notelseit.com
+*/
+
+
 $dir = '.'; // percorso della cartella da visualizzare
 $exclude = array('.', '..',  'index.php', 'folder_name', 'logo.png'); // array per escludere file e cartelle specifiche
 
