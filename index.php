@@ -15,82 +15,49 @@ $exclude = array('.', '..',  'index.php', 'folder_name', 'logo.png'); // array p
 
 $files = array_diff(scandir($dir), $exclude);
 
-/*//Apertura della cartella
+
+//Apertura della cartella
 $dir = opendir($folder);
 echo '<div class="row">';
 
-
-        
-foreach($files as $file) {
-    if(is_dir($file)) {
-        // visualizzazione anteprima cartella
-        echo '<div class="col-md-3">';
-        echo '<a href="'.$file.'">';
-        echo '<div class="thumbnail">';
-        echo '<img src="/images/folder.png" alt="'.$file.'">';
-        echo '<div class="caption">'.$file.'</div>';
-        echo '</div>';
-        echo '</a>';
-        echo '</div>';
-   if(!in_array($file, $exclude)) {
-            copy('index.php', $file.'/index.php');
-        }
-    }    else {
-        // estensioni di file supportate
-        $supported_ext = array('jpg', 'jpeg', 'bmp', 'png');
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
-        if(in_array($ext, $supported_ext)) {
-            // visualizzazione anteprima immagine
-            echo '<div class="col-md-3">';
-            echo '<a href="'.$file.'" data-lightbox="image-set">';
+// Funzione ricorsiva per la visualizzazione dei file e cartelle
+function display_files_and_folders($path) {
+    $files = scandir($path);
+    foreach($files as $file) {
+        if(is_dir($file)) {
+            // visualizzazione anteprima cartella
+            echo '<div class="col-md-3 col-sm-6">';
+            echo '<a href="#" onclick="display_files_and_folders(\''.$path.'/'.$file.'\')">';
             echo '<div class="thumbnail">';
-            echo '<img src="'.$file.'" alt="'.$file.'" width="200px">';
+            echo '<img src="images/folder.png" alt="'.$file.'">';
             echo '<div class="caption">'.$file.'</div>';
             echo '</div>';
             echo '</a>';
             echo '</div>';
+            if(!in_array($file, $exclude)) {
+                copy('index.php', $file.'/index.php');
+            }
+        } else {
+            // estensioni di file supportate
+            $supported_ext = array('jpg', 'jpeg', 'bmp', 'png');
+            $ext = pathinfo($file, PATHINFO_EXTENSION);
+            if(in_array($ext, $supported_ext)) {
+                // visualizzazione anteprima immagine
+                echo '<div class="col-md-3 col-sm-6">';
+                echo '<a href="'.$path.'/'.$file.'" data-lightbox="image-set">';
+                echo '<div class="thumbnail">';
+                echo '<img src="'.$path.'/'.$file.'" alt="'.$file.'" width="200px">';
+                echo '<div class="caption">'.$file.'</div>';
+                echo '</div>';
+                echo '</a>';
+                echo '</div>';
+            }
         }
     }
 }
 
-echo '</div>';*/
-
-//Apertura della cartella
-//Apertura della cartella
-$dir = opendir($folder);
-echo '<div class="row">';
-
-foreach($files as $file) {
-if(is_dir($file)) {
-// visualizzazione anteprima cartella
-echo '<div class="col-md-3 col-sm-6">';
-echo '<a href="'.$file.'">';
-echo '<div class="thumbnail">';
-echo '<img src="images/folder.png" alt="'.$file.'">';
-echo '<div class="caption">'.$file.'</div>';
-echo '</div>';
-echo '</a>';
-echo '</div>';
-if(!in_array($file, $exclude)) {
-copy('index.php', $file.'/index.php');
-}
-} else {
-// estensioni di file supportate
-$supported_ext = array('jpg', 'jpeg', 'bmp', 'png');
-$ext = pathinfo($file, PATHINFO_EXTENSION);
-if(in_array($ext, $supported_ext)) {
-// visualizzazione anteprima immagine
-echo '<div class="col-md-3 col-sm-6">';
-echo '<a href="'.$file.'" data-lightbox="image-set">';
-echo '<div class="thumbnail">';
-echo '<img src="'.$file.'" alt="'.$file.'" width="200px">';
-echo '<div class="caption">'.$file.'</div>';
-echo '</div>';
-echo '</a>';
-echo '</div>';
-}
-}
-}
+// Chiamata iniziale della funzione
+display_files_and_folders($folder);
 
 echo '</div>';
 
