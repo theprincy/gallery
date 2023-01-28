@@ -1,103 +1,104 @@
-<style>
-    /* add css for grid layout and styling for folders and files */
-.folder {
-    display: inline-block;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-
-.file {
-    display: inline-block;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-</style>
 <?php
-//Includiamo i file CSS e JS per la libreria Lightbox e la visualizzazione in griglia tramite CDN
-echo '<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">';
-echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>';
-echo '<link rel="stylesheet" type="text/css" href="grid.css">';
+$dir = '.'; // percorso della cartella da visualizzare
+$exclude = array('.', '..',  'index.php', 'folder_name', 'logo.png'); // array per escludere file e cartelle specifiche
 
-//Definiamo la cartella da visualizzare
-$folder = './';
+$files = array_diff(scandir($dir), $exclude);
 
-//Definiamo le estensioni dei file da visualizzare
-$extensions = array("jpg", "jpeg", "bmp", "png");
+/*//Apertura della cartella
+$dir = opendir($folder);
+echo '<div class="row">';
 
-//Definiamo le cartelle da escludere dalla visualizzazione
-$excludeFolders = array(".", "..", "folder_name" );
 
-//Definiamo i file da escludere dalla visualizzazione
-$excludeFiles = array(".", "..", "file.ext" );
-
-//Funzione per escludere cartelle e file
-function exclude($name, $excludeFolders, $excludeFiles) {
-    if(in_array($name, $excludeFolders) || in_array($name, $excludeFiles)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-//Funzione per copiare il file index.php nelle cartelle e sottocartelle
-function copyIndex($folder, $excludeFolders) {
-    $dir = opendir($folder);
-    while($file = readdir($dir)) {
-        if(is_dir($file) && !exclude($file, $excludeFolders, array())) {
-            if(!file_exists($file.'/index.php')) {
-                copy('index.php', $file.'/index.php');
-            }
-            copyIndex($file, $excludeFolders);
+        
+foreach($files as $file) {
+    if(is_dir($file)) {
+        // visualizzazione anteprima cartella
+        echo '<div class="col-md-3">';
+        echo '<a href="'.$file.'">';
+        echo '<div class="thumbnail">';
+        echo '<img src="/images/folder.png" alt="'.$file.'">';
+        echo '<div class="caption">'.$file.'</div>';
+        echo '</div>';
+        echo '</a>';
+        echo '</div>';
+   if(!in_array($file, $exclude)) {
+            copy('index.php', $file.'/index.php');
+        }
+    }    else {
+        // estensioni di file supportate
+        $supported_ext = array('jpg', 'jpeg', 'bmp', 'png');
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        if(in_array($ext, $supported_ext)) {
+            // visualizzazione anteprima immagine
+            echo '<div class="col-md-3">';
+            echo '<a href="'.$file.'" data-lightbox="image-set">';
+            echo '<div class="thumbnail">';
+            echo '<img src="'.$file.'" alt="'.$file.'" width="200px">';
+            echo '<div class="caption">'.$file.'</div>';
+            echo '</div>';
+            echo '</a>';
+            echo '</div>';
         }
     }
-    closedir($dir);
 }
 
-//Eseguiamo la funzione di copia
-copyIndex($folder, $excludeFolders);
+echo '</div>';*/
+
+//Apertura della cartella
 //Apertura della cartella
 $dir = opendir($folder);
+echo '<div class="row">';
 
-//Array per contenere i file e le cartelle
-$files = array();
-$folders = array();
-
-//Navigazione tra i file e le cartelle
-while($file = readdir($dir)) {
-    if(!is_dir($file) && in_array(pathinfo($file, PATHINFO_EXTENSION), $extensions) && !exclude($file, $excludeFolders, $excludeFiles)) {
-        array_push($files, $file);
-    } elseif(is_dir($file) && !exclude($file, $excludeFolders, $excludeFiles)) {
-        array_push($folders, $file);
-    }
-}
-
-//Ordinamento dei file e delle cartelle
-sort($files);
-sort($folders);
-
-echo '<div class="grid-container">';
-
-//Visualizzazione dei file
 foreach($files as $file) {
-    echo '<a href="'.$folder.$file.'" data-lightbox="image-1" data-title="'.$file.'"><img src="'.$folder.$file.'" class="grid-item" width="200px"></a>';
+if(is_dir($file)) {
+// visualizzazione anteprima cartella
+echo '<div class="col-md-3 col-sm-6">';
+echo '<a href="'.$file.'">';
+echo '<div class="thumbnail">';
+echo '<img src="images/folder.png" alt="'.$file.'">';
+echo '<div class="caption">'.$file.'</div>';
+echo '</div>';
+echo '</a>';
+echo '</div>';
+if(!in_array($file, $exclude)) {
+copy('index.php', $file.'/index.php');
 }
-
-//Visualizzazione delle cartelle
-foreach($folders as $folder) {
-    echo '<a href="'.$folder.'"><div class="grid-item">'.$folder.'</div></a>';
+} else {
+// estensioni di file supportate
+$supported_ext = array('jpg', 'jpeg', 'bmp', 'png');
+$ext = pathinfo($file, PATHINFO_EXTENSION);
+if(in_array($ext, $supported_ext)) {
+// visualizzazione anteprima immagine
+echo '<div class="col-md-3 col-sm-6">';
+echo '<a href="'.$file.'" data-lightbox="image-set">';
+echo '<div class="thumbnail">';
+echo '<img src="'.$file.'" alt="'.$file.'" width="200px">';
+echo '<div class="caption">'.$file.'</div>';
+echo '</div>';
+echo '</a>';
+echo '</div>';
+}
+}
 }
 
 echo '</div>';
 
-//Chiusura della cartella
-closedir($dir);
-echo '<footer>';
-echo '<a href="index.php">Home</a>';
-echo '<a href="#" onclick="history.back()">Indietro</a>';
-echo '<a href="#" onclick="history.forward()">Avanti</a>';
-echo '</footer>';
-
+// Creiamo il menu di navigazione nel footer
+echo '<div class="nav-footer">
+<a href="/images/" class="btn btn-primary " role="button">Home Archivio</a>
+<a href="javascript:history.back()" class="btn btn-primary" role="button">Indietro</a> 
+</div>';
 ?>
+<!--include CDN Bootstrap CSS per la griglia-->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!--include CDN Lightbox per l'apertura delle immagini-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/css/lightbox.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/js/lightbox.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+<style>
+.btn-primary {color: #fff;background-color: #337ab7;border-color: #2e6da4;font-size: 1.3em;}
+.nav-footer {text-align:center;}
+   .row{margin: 6rem;}
+   .caption {font-size: 1.2em;text-align: center;}
+</style>
